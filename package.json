@@ -1,0 +1,18 @@
+{
+  "name": "benful",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "ts-watch": "tsc -w",
+    "dev": "nodemon dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^16.9.6",
+    "nodemon": "^2.0.12",
+    "typescript": "^4.4.3"
+  }
+}
