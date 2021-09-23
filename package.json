@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "ts-watch": "tsc -w",
-    "dev": "nodemon dist/index.js"
+    "dev": "nodemon dist/index.js",
+    "mig-create": "rm -rf dist/migrations && npx mikro-orm migration:create",
+    "mig-down": "rm -rf dist/migrations/* && npx mikro-orm migration:down"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +15,21 @@
   "devDependencies": {
     "@types/node": "^16.9.6",
     "nodemon": "^2.0.12",
+    "ts-node": "^10.2.1",
     "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "@mikro-orm/cli": "^4.5.9",
+    "@mikro-orm/core": "^4.5.9",
+    "@mikro-orm/migrations": "^4.5.9",
+    "@mikro-orm/postgresql": "^4.5.9",
+    "pg": "^8.7.1"
+  },
+  "mikro-orm": {
+    "useTsNode": true,
+    "configPaths": [
+      "./src/mikro-orm.config.ts",
+      "./dist/mikro-orm.config.js"
+    ]
   }
 }
