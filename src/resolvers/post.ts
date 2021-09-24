@@ -1,7 +1,6 @@
 import { Post } from "../entities/Post"; // resolver auto completion problem "src/entities/Post"
 import { Resolver, Query, Ctx, Arg, Int, Mutation } from "type-graphql";
 import { MyContext } from "src/types";
-import { emit } from "process";
 
 @Resolver()
 export class PostResolver {

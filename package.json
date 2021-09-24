@@ -6,8 +6,10 @@
   "scripts": {
     "ts-watch": "tsc -w",
     "dev": "nodemon dist/index.js",
-    "mig-create": "rm -rf dist/migrations && npx mikro-orm migration:create",
-    "mig-down": "rm -rf dist/migrations/* && npx mikro-orm migration:down"
+    "mig-create": "rm -rf dist/migrations/* && npx mikro-orm migration:create",
+    "mig-down": "rm -rf dist/migrations/* && npx mikro-orm migration:down",
+    "db-up": "docker container start benpg",
+    "db-down": "docker container stop benpg"
   },
   "keywords": [],
   "author": "",
@@ -25,9 +27,11 @@
     "@mikro-orm/migrations": "^4.5.9",
     "@mikro-orm/postgresql": "^4.5.9",
     "apollo-server-express": "2",
+    "argon2": "^0.28.2",
     "express": "^4.17.1",
     "graphql": "^15.6.0",
     "pg": "^8.7.1",
+    "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.1.1"
   },
   "mikro-orm": {
