@@ -8,6 +8,7 @@ import {
   Field,
   Ctx,
   ObjectType,
+  Query,
 } from "type-graphql";
 import argon2 from "argon2";
 
@@ -38,10 +39,18 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() { req, em }: MyContext) {
+    if (!req.session.userId) return null;
+
+    const user = await em.findOne(User, { id: req.session.userId });
+    return user;
+  }
+
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") { username, password }: UserInput,
-    @Ctx() { em }: MyContext
+    @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
     // validation of registering username
     if (username.length <= 2) {
@@ -56,12 +65,12 @@ export class UserResolver {
     }
 
     // Validation of registering password
-    if (password.length <= 3) {
+    if (password.length <= 2) {
       return {
         errors: [
           {
             field: "password",
-            message: "password length must be longer than 3 characters",
+            message: "password length must be longer than 2 characters",
           },
         ],
       };
@@ -95,6 +104,9 @@ export class UserResolver {
         ],
       };
     }
+
+    // Login in the use as well
+    req.session.userId = user.id;
 
     return { user };
   }
