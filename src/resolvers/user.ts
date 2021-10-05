@@ -4,22 +4,15 @@ import {
   Resolver,
   Mutation,
   Arg,
-  InputType,
   Field,
   Ctx,
   ObjectType,
   Query,
 } from "type-graphql";
 import argon2 from "argon2";
-import { COOKIE_NAME } from "src/constants";
-
-@InputType()
-class UserInput {
-  @Field()
-  username: string;
-  @Field()
-  password: string;
-}
+import { COOKIE_NAME } from "../constants";
+import { UserInput } from "./UserInput";
+import { validateRegister } from "../utils/validRegister";
 
 @ObjectType()
 class ResponseError {
@@ -48,40 +41,32 @@ export class UserResolver {
     return user;
   }
 
+  @Mutation(() => Boolean)
+  async forgotPassword(@Arg("email") email: string, @Ctx() { em }: MyContext) {
+    return true;
+  }
+
   @Mutation(() => UserResponse)
   async register(
-    @Arg("options") { username, password }: UserInput,
+    @Arg("options") { password, username, email }: UserInput,
     @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
-    // validation of registering username
-    if (username.length <= 2) {
-      return {
-        errors: [
-          {
-            field: "username",
-            message: "username length must be longer than 2 characters",
-          },
-        ],
-      };
-    }
-
-    // Validation of registering password
-    if (password.length <= 2) {
-      return {
-        errors: [
-          {
-            field: "password",
-            message: "password length must be longer than 2 characters",
-          },
-        ],
-      };
+    const errors = validateRegister({ password, username, email });
+    if (errors) {
+      return { errors };
     }
 
     const hashedPassword = await argon2.hash(password);
-    const user = em.create(User, { username, password: hashedPassword });
+    const user = em.create(User, { username, password: hashedPassword, email });
 
     // Validation of if user already exist
     try {
+      // const [user] = await (em as EntityManager).createQueryBuilder(User).getKnexQuery().insert({
+      //   username,
+      //   password: hashedPassword,
+      //   created_at: new Date(),
+      //   updated_at: new Date(),
+      // });
       await em.persistAndFlush(user);
     } catch (err) {
       console.error(err);
@@ -114,19 +99,25 @@ export class UserResolver {
 
   @Mutation(() => UserResponse)
   async login(
-    @Arg("options") { username, password }: UserInput,
+    @Arg("usernameOrEmail") usernameOrEmail: string,
+    @Arg("password") password: string,
     @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
-    const user = await em.findOne(User, {
-      username,
-    });
+    const user = await em.findOne(
+      User,
+      usernameOrEmail.includes("@")
+        ? {
+            email: usernameOrEmail,
+          }
+        : { username: usernameOrEmail }
+    );
 
     // Validation of user? can be applied here: LATER
     if (!user) {
       return {
         errors: [
           {
-            field: "username",
+            field: "usernameOrEmail",
             message: "that username doesn't exist",
           },
         ],
