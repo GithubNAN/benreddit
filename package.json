@@ -6,8 +6,6 @@
   "scripts": {
     "ts-watch": "tsc -w",
     "dev": "nodemon dist/index.js",
-    "mig-create": "rm -rf dist/migrations/* && npx mikro-orm migration:create",
-    "mig-down": "rm -rf dist/migrations/* && npx mikro-orm migration:down",
     "db-create": "docker container run -p 5432:5432 -e POSTGRES_USER=ben -e POSTGRE_PASSWORD=pass -d --name benpg postgres",
     "db-up": "docker container start benpg",
     "db-down": "docker container stop benpg",
@@ -32,10 +30,6 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
-    "@mikro-orm/cli": "^4.5.9",
-    "@mikro-orm/core": "^4.5.9",
-    "@mikro-orm/migrations": "^4.5.9",
-    "@mikro-orm/postgresql": "^4.5.9",
     "@types/cors": "^2.8.12",
     "apollo-server-express": "2",
     "argon2": "^0.28.2",
@@ -49,13 +43,7 @@
     "nodemailer": "^6.6.5",
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
-    "type-graphql": "^1.1.1"
-  },
-  "mikro-orm": {
-    "useTsNode": true,
-    "configPaths": [
-      "./src/mikro-orm.config.ts",
-      "./dist/mikro-orm.config.js"
-    ]
+    "type-graphql": "^1.1.1",
+    "typeorm": "^0.2.38"
   }
 }
